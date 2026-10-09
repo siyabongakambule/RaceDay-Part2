@@ -1,12 +1,13 @@
-﻿using System.Net.Http.Headers;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using RaceDay.Dtos;
-
 namespace RaceDay.Tests;
-
 public static class TestAuthHelper
 {
-    public static async Task<string> RegisterAndLoginAsync(HttpClient client, string role, string emailSuffix)
+    public static async Task<string> RegisterAndLoginAsync(
+        HttpClient client,
+        string role,
+        string emailSuffix)
     {
         var register = new RegisterDto
         {
@@ -16,32 +17,36 @@ public static class TestAuthHelper
             PhoneNumber = "0800000000",
             Role = role
         };
-
-        var registerResponse = await client.PostAsJsonAsync("/api/auth/register", register);
-
-if (!registerResponse.IsSuccessStatusCode)
-{
-    var error = await registerResponse.Content.ReadAsStringAsync();
-
-    throw new Exception(
-        $"Registration failed with status {(int)registerResponse.StatusCode}: {error}");
-}
-
+        var registerResponse =
+            await client.PostAsJsonAsync("/api/auth/register", register);
+        if (!registerResponse.IsSuccessStatusCode)
+        {
+            var error = await registerResponse.Content.ReadAsStringAsync();
+            throw new Exception(
+                $"Registration failed with status {(int)registerResponse.StatusCode}: {error}");
+        }
         var login = new LoginDto
         {
             Email = register.Email,
             Password = register.Password
         };
-
         var response = await client.PostAsJsonAsync("/api/auth/login", login);
-        response.EnsureSuccessStatusCode();
-
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception(
+                $"Login failed with status {(int)response.StatusCode}: {error}");
+        }
         var body = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
-        return body!.Token;
+        if (body is null || string.IsNullOrWhiteSpace(body.Token))
+        {
+            throw new Exception("Login succeeded but no authentication token was returned.");
+        }
+        return body.Token;
     }
-
     public static void SetBearerToken(HttpClient client, string token)
     {
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
     }
 }
