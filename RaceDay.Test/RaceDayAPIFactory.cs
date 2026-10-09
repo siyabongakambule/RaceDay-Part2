@@ -7,7 +7,7 @@ using RaceDay.Data;
 
 namespace RaceDay.Tests;
 
-public class ApiFactory : WebApplicationFactoryglobal::Program
+public class ApiFactory : WebApplicationFactory<global::Program>
 {
 private readonly string _dbName = Guid.NewGuid().ToString();
 
