@@ -2,36 +2,28 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using RaceDay.Data;
 
 namespace RaceDay.Tests;
 
-// Spins up the real API pipeline (routing, [Authorize], JWT validation, Swagger)
-// but swaps the SQL Server database for a fresh, isolated in-memory one per test class.
-public class ApiFactory : WebApplicationFactory<Program>
+public class ApiFactory : WebApplicationFactory
 {
-    private readonly string _dbName = Guid.NewGuid().ToString();
+private readonly string _dbName = Guid.NewGuid().ToString();
 
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
+protected override void ConfigureWebHost(IWebHostBuilder builder)
+{
+    builder.ConfigureServices(services =>
     {
-        builder.ConfigureServices(services =>
+        // Remove the existing SQL Server database configuration.
+        services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
+        services.RemoveAll<ApplicationDbContext>();
+        // Use an isolated in-memory database for automated tests.
+        services.AddDbContext<ApplicationDbContext>(options =>
         {
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<DbContext>));
-            if (descriptor != null)
-            {
-                services.Remove(descriptor);
-            }
-
-            services.AddDbContext<DbContext>(options =>
-            {
-                options.UseInMemoryDatabase(_dbName);
-            });
-
-            // Ensure the database (and seeded roles) exist for this test run.
-            using var scope = services.BuildServiceProvider().CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<DbContext>();
-            db.Database.EnsureCreated();
+            options.UseInMemoryDatabase(_dbName);
         });
-    }
+    });
+}
+
 }
