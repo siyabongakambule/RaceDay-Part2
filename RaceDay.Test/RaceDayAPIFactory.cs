@@ -7,7 +7,7 @@ using RaceDay.Data;
 
 namespace RaceDay.Tests;
 
-public class ApiFactory : WebApplicationFactoryglobal::Program
+public class ApiFactory : Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<Program>
 {
 private readonly string _dbName = Guid.NewGuid().ToString();
 
