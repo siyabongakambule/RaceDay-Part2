@@ -11,13 +11,21 @@ public static class TestAuthHelper
         var register = new RegisterDto
         {
             FullName = $"Test {role} {emailSuffix}",
-            Email = $"{role.ToLower()}.{emailSuffix}@-tests.com",
+            Email = $"{role.ToLower()}.{emailSuffix}@tests.com",
             Password = "TestPassword123!",
             PhoneNumber = "0800000000",
             Role = role
         };
 
-        await client.PostAsJsonAsync("/api/auth/register", register);
+        var registerResponse = await client.PostAsJsonAsync("/api/auth/register", register);
+
+if (!registerResponse.IsSuccessStatusCode)
+{
+    var error = await registerResponse.Content.ReadAsStringAsync();
+
+    throw new Exception(
+        $"Registration failed with status {(int)registerResponse.StatusCode}: {error}");
+}
 
         var login = new LoginDto
         {
