@@ -19,6 +19,7 @@ The objectives of RaceDay Part 2 are to:
 * Integrate the application with a database using Entity Framework Core.
 * Test API functionality using automated unit and integration tests.
 * Use GitHub Actions to automate building and testing.
+  
 
 Technologies Used
 
@@ -83,6 +84,6 @@ The main database entities are:
 The database configuration defines relationships, foreign keys, unique indexes, and delete behaviours to support data integrity.
 
 The application also defines initial role data for Admin, Organiser, and Participant.
-The workflow runs
+The CI/CD workflow runs
 The project is connected to a SQL database
 
