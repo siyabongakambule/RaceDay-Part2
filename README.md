@@ -83,3 +83,4 @@ The main database entities are:
 The database configuration defines relationships, foreign keys, unique indexes, and delete behaviours to support data integrity.
 
 The application also defines initial role data for Admin, Organiser, and Participant.
+The workflow runs
