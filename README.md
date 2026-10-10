@@ -8,7 +8,7 @@ Part 2 builds on the database design and documentation from Part 1 by implementi
 
 Project Objectives
 
-The objectives of RaceDay Part 2 are to:
+The objectives of RaceDay project Part 2 are to:
 
 * Develop a RESTful API for managing running events.
 * Implement user registration and login.
