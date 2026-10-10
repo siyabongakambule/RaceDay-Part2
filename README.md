@@ -84,3 +84,4 @@ The database configuration defines relationships, foreign keys, unique indexes, 
 
 The application also defines initial role data for Admin, Organiser, and Participant.
 The workflow runs
+The project is connected to a SQL database
