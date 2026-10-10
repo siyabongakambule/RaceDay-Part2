@@ -85,4 +85,4 @@ The database configuration defines relationships, foreign keys, unique indexes, 
 The application also defines initial role data for Admin, Organiser, and Participant.
 The workflow runs
 The project is connected to a SQL database
-Technologies used are visual studio 2022 and SQL Server Management Studio
+
