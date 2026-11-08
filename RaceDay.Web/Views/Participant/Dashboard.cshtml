@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Participant Dashboard";
+}
+
+<div class="container mt-5">
+
+    <h1>Welcome to RaceDay!</h1>
+
+    <h3>Participant Dashboard</h3>
+
+    <p>Welcome, @User.Identity?.Name!</p>
+
+    <hr />
+
+    <h4>What would you like to do?</h4>
+
+    <div class="row mt-4">
+
+        <!-- Explore Events -->
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Participant"
+               asp-action="Events"
+               class="text-decoration-none text-dark">
+
+                <div class="card shadow p-3 h-100">
+                    <h5>Explore Events</h5>
+                    <p>Discover upcoming running and cycling events.</p>
+                    <span class="btn btn-primary mt-auto">Explore Events</span>
+                </div>
+
+            </a>
+        </div>
+
+        <!-- My Enrolments -->
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Participant"
+               asp-action="Enrolments"
+               class="text-decoration-none text-dark">
+
+                <div class="card shadow p-3 h-100">
+                    <h5>My Enrolments</h5>
+                    <p>View your race registrations and their status.</p>
+                    <span class="btn btn-primary mt-auto">My Enrolments</span>
+                </div>
+
+            </a>
+        </div>
+
+        <!-- My Results -->
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Participant"
+               asp-action="Results"
+               class="text-decoration-none text-dark">
+
+                <div class="card shadow p-3 h-100">
+                    <h5>My Results</h5>
+                    <p>View your race history and finishing positions.</p>
+                    <span class="btn btn-primary mt-auto">My Results</span>
+                </div>
+
+            </a>
+        </div>
+
+    </div>
+
+</div>

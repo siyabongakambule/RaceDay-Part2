@@ -1,0 +1,78 @@
+﻿@model List<RaceDay.Web.ViewModels.EventViewModel>
+
+@{
+    ViewData["Title"] = "Explore Events";
+}
+
+<div class="container mt-5">
+
+    <div class="mb-4">
+        <h1>Explore Race Events</h1>
+        <p class="text-muted">
+            Discover upcoming running and cycling events.
+        </p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No events are currently available.
+            Please check again later.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+
+                    <div class="card h-100 shadow-sm">
+
+                        <div class="card-body">
+
+                            <span class="badge bg-primary mb-2">
+                                @item.EventType
+                            </span>
+
+                            <h5 class="card-title">
+                                @item.EventName
+                            </h5>
+
+                            <p class="card-text">
+                                @item.Description
+                            </p>
+
+                            <p>
+                                <strong>Date:</strong>
+                                @item.EventDate.ToString("dd MMMM yyyy")
+                            </p>
+
+                            <p>
+                                <strong>Province:</strong>
+                                @item.Province
+                            </p>
+
+                            <p>
+                                <strong>Venue:</strong>
+                                @item.Venue
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+    <a asp-controller="Participant"
+       asp-action="Dashboard"
+       class="btn btn-secondary mt-3">
+        Back to Dashboard
+    </a>
+
+</div>

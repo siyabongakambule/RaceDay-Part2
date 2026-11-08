@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "Organiser Dashboard";
+}
+
+<style>
+    .dashboard-header {
+        background: linear-gradient(120deg, #101d35, #174b70);
+        color: white;
+        padding: 35px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+    }
+
+    .dashboard-header h1 {
+        font-weight: 800;
+    }
+
+    .dashboard-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 25px;
+        height: 100%;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+    }
+
+    .dashboard-icon {
+        font-size: 35px;
+        margin-bottom: 15px;
+    }
+
+    .dashboard-card h4 {
+        font-weight: 700;
+        color: #172b4d;
+    }
+
+    .dashboard-card p {
+        color: #64748b;
+        min-height: 48px;
+    }
+
+    .section-heading {
+        font-weight: 800;
+        color: #172b4d;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container mt-4 mb-5">
+
+    <div class="dashboard-header">
+        <h1>Organiser Dashboard</h1>
+        <h5>Welcome, @User.Identity?.Name!</h5>
+        <p>Manage your races, participants, categories and results from one place.</p>
+    </div>
+
+    <h3 class="section-heading">Event Management</h3>
+
+    <div class="row g-4">
+
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon">🏁</div>
+                <h4>Manage Events</h4>
+                <p>Create, view, edit and delete your events.</p>
+                <a href="#" class="btn btn-primary">Manage Events</a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon">🏆</div>
+                <h4>Manage Categories</h4>
+                <p>Create categories and set race distances and entry fees.</p>
+                <a href="#" class="btn btn-primary">Manage Categories</a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon">👥</div>
+                <h4>View Enrolments</h4>
+                <p>View participants and their enrolment statuses.</p>
+                <a href="#" class="btn btn-primary">View Enrolments</a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon">⏱️</div>
+                <h4>Race Results</h4>
+                <p>Capture finishing times and participant positions.</p>
+                <a href="#" class="btn btn-primary">Manage Results</a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon">📅</div>
+                <h4>Upcoming Events</h4>
+                <p>Keep track of your scheduled races.</p>
+                <a href="#" class="btn btn-primary">View Events</a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon">📊</div>
+                <h4>Event Overview</h4>
+                <p>Review your event and participant information.</p>
+                <a href="#" class="btn btn-primary">View Overview</a>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,22 +1,115 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
+/* GENERAL */
 
 body {
-  margin-bottom: 60px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f7fa;
+    color: #202938;
+    font-family: Arial, sans-serif;
+}
+
+main {
+    flex: 1;
+}
+
+/* NAVIGATION */
+
+.raceday-navbar {
+    background-color: #101d32;
+    padding: 16px 0;
+}
+
+.navbar-brand {
+    font-size: 25px;
+    letter-spacing: 0.5px;
+}
+
+.brand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-right: 6px;
+    border-radius: 8px;
+    background-color: #ff6b35;
+    color: white;
+}
+
+.navbar .nav-link {
+    color: #dce4ef;
+    margin: 0 8px;
+}
+
+    .navbar .nav-link:hover {
+        color: #ff8b60;
+    }
+
+/* BUTTONS */
+
+.btn-raceday {
+    background-color: #ff6b35;
+    color: white;
+    border: 1px solid #ff6b35;
+}
+
+    .btn-raceday:hover {
+        background-color: #e95725;
+        color: white;
+        border-color: #e95725;
+    }
+
+/* CARDS */
+
+.card {
+    border: none;
+    border-radius: 12px;
+}
+
+    .card.shadow {
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07) !important;
+    }
+
+/* DASHBOARDS */
+
+.dashboard-heading {
+    font-weight: 700;
+    color: #101d32;
+}
+
+/* FORMS */
+
+.form-control,
+.form-select {
+    padding: 11px;
+    border-radius: 7px;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #ff6b35;
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.15);
+    }
+
+/* FOOTER */
+
+.raceday-footer {
+    background-color: #101d32;
+    color: #dce4ef;
+    padding: 25px 0;
+    margin-top: 50px;
+}
+
+/* MOBILE */
+
+@media (max-width: 991px) {
+    .navbar .nav-link {
+        margin: 5px 0;
+    }
+
+    .navbar .d-flex {
+        margin-top: 12px;
+        align-items: flex-start !important;
+    }
 }

@@ -1,0 +1,78 @@
+﻿@model List<RaceDay.Web.ViewModels.EnrolmentViewModel>
+
+@{
+    ViewData["Title"] = "My Enrolments";
+}
+
+<div class="container mt-5">
+
+    <h1>My Enrolments</h1>
+
+    <p class="text-muted">
+        View your race registrations and their current status.
+    </p>
+
+    <hr />
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            You have not enrolled in any events yet.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-striped">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th>Event</th>
+                        <th>Category</th>
+                        <th>Enrolment Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.EventName</td>
+                            <td>@item.CategoryName</td>
+                            <td>@item.EnrolmentDate.ToString("dd MMMM yyyy")</td>
+                            <td>
+                                @if (item.Status == "Confirmed")
+                                {
+                                    <span class="badge bg-success">Confirmed</span>
+                                }
+                                else if (item.Status == "Cancelled")
+                                {
+                                    <span class="badge bg-danger">Cancelled</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        @item.Status
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+
+    <a asp-controller="Participant"
+       asp-action="Dashboard"
+       class="btn btn-secondary mt-3">
+        Back to Dashboard
+    </a>
+
+</div>
