@@ -1,0 +1,69 @@
+﻿@model RaceDay.Web.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="card shadow-sm mx-auto" style="max-width: 650px;">
+        <div class="card-header bg-primary text-white p-4">
+            <h2 class="mb-0">My Profile</h2>
+            <p class="mb-0">View and update your personal information.</p>
+        </div>
+        <div class="card-body p-4">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+            <form asp-controller="Participant"
+                  asp-action="Profile"
+                  method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label">
+                        Full Name
+                    </label>
+                    <input asp-for="FullName"
+                           class="form-control"
+                           required />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">
+                        Email Address
+                    </label>
+                    <input asp-for="Email"
+                           class="form-control"
+                           readonly />
+                </div>
+                <div class="mb-4">
+                    <label asp-for="PhoneNumber" class="form-label">
+                        Phone Number
+                    </label>
+                    <input asp-for="PhoneNumber"
+                           class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Save Changes
+                </button>
+                <a asp-controller="Participant"
+                   asp-action="Dashboard"
+                   class="btn btn-outline-secondary ms-2">
+                    Back to Dashboard
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+}

@@ -92,5 +92,41 @@ namespace RaceDay.Web.Controllers
 
             return View(results ?? new List<ResultViewModel>());
         }
+    
+    public async Task<IActionResult> Profile()
+        {
+            var profile = await _api.GetAsync<ProfileViewModel>("api/users/me");
+
+            if (profile == null)
+                return View(new ProfileViewModel());
+
+            return View(profile);
+        }
+
+        // Update participant profile
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(ProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var response = await _api.PutAsync(
+                "api/users/me",
+                new
+                {
+                    FullName = model.FullName,
+                    PhoneNumber = model.PhoneNumber
+                });
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Profile updated successfully!";
+                return RedirectToAction(nameof(Profile));
+            }
+
+            TempData["ErrorMessage"] = "Unable to update your profile.";
+            return View(model);
+        }
     }
 }
