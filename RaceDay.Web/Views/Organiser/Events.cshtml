@@ -1,59 +1,108 @@
 ﻿@model List<RaceDay.Web.ViewModels.EventViewModel>
 
 @{
-ViewData["Title"] = "Manage Events";
+    ViewData["Title"] = "Manage Events";
 }
 
 <div class="container mt-4 mb-5">
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="fw-bold">Manage Events</h1>
-        <p class="text-muted">View and manage the races you have created.</p>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold">Manage Events</h1>
+            <p class="text-muted">View and manage the races you have created.</p>
+        </div>
+
+        <a asp-controller="Organiser"
+           asp-action="CreateEvent"
+           class="btn btn-primary">
+            + Create New Event
+        </a>
     </div>
-    <a asp-controller="Organiser"
-       asp-action="CreateEvent"
-       class="btn btn-primary">
-        + Create New Event
-    </a>
-</div>
-@if (Model == null || !Model.Any())
-{
-    <div class="alert alert-info">
-        You have not created any events yet.
-        Select "Create New Event" to get started.
-    </div>
-}
-else
-{
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>Event Name</th>
-                    <th>Type</th>
-                    <th>Date</th>
-                    <th>Province</th>
-                    <th>Venue</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var raceEvent in Model)
-                {
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            You have not created any events yet.
+            Select "Create New Event" to get started.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+
+                <thead class="table-dark">
                     <tr>
-                        <td>@raceEvent.EventName</td>
-                        <td>@raceEvent.EventType</td>
-                        <td>@raceEvent.EventDate.ToString("dd MMM yyyy")</td>
-                        <td>@raceEvent.Province</td>
-                        <td>@raceEvent.Venue</td>
+                        <th>Event Name</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Province</th>
+                        <th>Venue</th>
+                        <th>Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
-<a asp-controller="Organiser"
-   asp-action="Dashboard"
-   class="btn btn-outline-secondary mt-3">
-    Back to Dashboard
-</a>
+                </thead>
+
+                <tbody>
+                    @foreach (var raceEvent in Model)
+                    {
+                        <tr>
+                            <td>@raceEvent.EventName</td>
+                            <td>@raceEvent.EventType</td>
+                            <td>@raceEvent.EventDate.ToString("dd MMM yyyy")</td>
+                            <td>@raceEvent.Province</td>
+                            <td>@raceEvent.Venue</td>
+
+                            <td>
+                                <div class="d-flex gap-2">
+
+                                    <a asp-controller="Organiser"
+                                       asp-action="EditEvent"
+                                       asp-route-id="@raceEvent.EventID"
+                                       class="btn btn-sm btn-warning">
+                                        Edit
+                                    </a>
+
+                                    <form asp-controller="Organiser"
+                                          asp-action="DeleteEvent"
+                                          asp-route-id="@raceEvent.EventID"
+                                          method="post"
+                                          onsubmit="return confirm('Are you sure you want to delete this event?');">
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-danger">
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    }
+
+    <a asp-controller="Organiser"
+       asp-action="Dashboard"
+       class="btn btn-outline-secondary mt-3">
+        Back to Dashboard
+    </a>
+
 </div>

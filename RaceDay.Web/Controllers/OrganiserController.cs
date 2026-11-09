@@ -16,24 +16,19 @@ namespace RaceDay.Web.Controllers
             _api = api;
         }
 
-        // Organiser dashboard
         public IActionResult Dashboard()
         {
             return View();
         }
 
-        // Display events belonging to the logged-in organiser
         public async Task<IActionResult> Events()
         {
-            var events = await _api.GetAsync<List<EventViewModel>>(
-                "api/events");
+            var events = await _api.GetAsync<List<EventViewModel>>("api/events");
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (!int.TryParse(userId, out int organiserId))
-            {
                 return Forbid();
-            }
 
             var myEvents = (events ?? new List<EventViewModel>())
                 .Where(e => e.OrganiserID == organiserId)
@@ -42,7 +37,6 @@ namespace RaceDay.Web.Controllers
             return View(myEvents);
         }
 
-        // Display the create event form
         [HttpGet]
         public IActionResult CreateEvent()
         {
@@ -52,18 +46,14 @@ namespace RaceDay.Web.Controllers
             });
         }
 
-        // Submit a new event to the API
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateEvent(CreateEventViewModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
 
-            var response = await _api.PostAsync(
-                "api/events", model);
+            var response = await _api.PostAsync("api/events", model);
 
             if (response.IsSuccessStatusCode)
             {
@@ -73,13 +63,83 @@ namespace RaceDay.Web.Controllers
 
             var errorMessage = await response.Content.ReadAsStringAsync();
 
-            ModelState.AddModelError(
-                string.Empty,
+            ModelState.AddModelError(string.Empty,
                 string.IsNullOrWhiteSpace(errorMessage)
-                    ? "Unable to create the event. Please try again."
-                    : errorMessage);
+                ? "Unable to create the event. Please try again."
+                : errorMessage);
 
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditEvent(int id)
+        {
+            var raceEvent = await _api.GetAsync<EventViewModel>($"api/events/{id}");
+
+            if (raceEvent == null)
+                return NotFound();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userId, out int organiserId) ||
+                raceEvent.OrganiserID != organiserId)
+                return Forbid();
+
+            var model = new CreateEventViewModel
+            {
+                EventName = raceEvent.EventName,
+                EventType = raceEvent.EventType,
+                EventDate = raceEvent.EventDate,
+                Province = raceEvent.Province,
+                Venue = raceEvent.Venue,
+                Description = raceEvent.Description
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditEvent(int id, CreateEventViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var response = await _api.PutAsync($"api/events/{id}", model);
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Your event was updated successfully!";
+                return RedirectToAction(nameof(Events));
+            }
+
+            var errorMessage = await response.Content.ReadAsStringAsync();
+
+            ModelState.AddModelError(string.Empty,
+                string.IsNullOrWhiteSpace(errorMessage)
+                ? "Unable to update the event."
+                : errorMessage);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteEvent(int id)
+        {
+            var response = await _api.DeleteAsync($"api/events/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Event deleted successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] =
+                    "The event could not be deleted. It may have existing records or you may not have permission.";
+            }
+
+            return RedirectToAction(nameof(Events));
         }
     }
 }
