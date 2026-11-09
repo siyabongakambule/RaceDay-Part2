@@ -141,5 +141,166 @@ namespace RaceDay.Web.Controllers
 
             return RedirectToAction(nameof(Events));
         }
+    
+
+    //  CATEGORY MANAGEMENT 
+
+[HttpGet]
+        public async Task<IActionResult> Categories(int eventId)
+        {
+            var raceEvent = await _api.GetAsync<EventViewModel>($"api/events/{eventId}");
+
+            if (raceEvent == null)
+                return NotFound();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userId, out int organiserId) ||
+                raceEvent.OrganiserID != organiserId)
+                return Forbid();
+
+            var categories = await _api.GetAsync<List<CategoryViewModel>>(
+                $"api/events/{eventId}/categories");
+
+            ViewBag.EventID = eventId;
+            ViewBag.EventName = raceEvent.EventName;
+
+            return View(categories ?? new List<CategoryViewModel>());
+        }
+
+        [HttpGet]
+        public IActionResult CreateCategory(int eventId)
+        {
+            ViewBag.EventID = eventId;
+            return View(new CreateCategoryViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateCategory(
+            int eventId, CreateCategoryViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.EventID = eventId;
+                return View(model);
+            }
+
+            var response = await _api.PostAsync(
+                $"api/events/{eventId}/categories", model);
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Category created successfully!";
+                return RedirectToAction(nameof(Categories), new { eventId });
+            }
+
+            var error = await response.Content.ReadAsStringAsync();
+
+            ModelState.AddModelError(string.Empty,
+                string.IsNullOrWhiteSpace(error)
+                ? "Unable to create category."
+                : error);
+
+            ViewBag.EventID = eventId;
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditCategory(int eventId, int categoryId)
+        {
+            var categories = await _api.GetAsync<List<CategoryViewModel>>(
+                $"api/events/{eventId}/categories");
+
+            var category = categories?.FirstOrDefault(
+                c => c.CategoryID == categoryId);
+
+            if (category == null)
+                return NotFound();
+
+            var raceEvent = await _api.GetAsync<EventViewModel>(
+                $"api/events/{eventId}");
+
+            if (raceEvent == null)
+                return NotFound();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userId, out int organiserId) ||
+                raceEvent.OrganiserID != organiserId)
+                return Forbid();
+
+            ViewBag.EventID = eventId;
+            ViewBag.CategoryID = categoryId;
+
+            var model = new CreateCategoryViewModel
+            {
+                CategoryName = category.CategoryName,
+                DistanceKm = category.DistanceKm,
+                EntryFee = category.EntryFee,
+                MaxParticipants = category.MaxParticipants
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditCategory(
+            int eventId, int categoryId, CreateCategoryViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.EventID = eventId;
+                ViewBag.CategoryID = categoryId;
+                return View(model);
+            }
+
+            var response = await _api.PutAsync(
+                $"api/categories/{categoryId}", model);
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Category updated successfully!";
+                return RedirectToAction(nameof(Categories), new { eventId });
+            }
+
+            var error = await response.Content.ReadAsStringAsync();
+
+            ModelState.AddModelError(string.Empty,
+                string.IsNullOrWhiteSpace(error)
+                ? "Unable to update category."
+                : error);
+
+            ViewBag.EventID = eventId;
+            ViewBag.CategoryID = categoryId;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteCategory(int eventId, int categoryId)
+        {
+            var response = await _api.DeleteAsync(
+                $"api/categories/{categoryId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Category deleted successfully!";
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+
+                TempData["ErrorMessage"] =
+                    string.IsNullOrWhiteSpace(error)
+                    ? "Unable to delete category. It may have existing enrolments."
+                    : error;
+            }
+
+            return RedirectToAction(nameof(Categories), new { eventId });
+        }
+
     }
 }

@@ -67,7 +67,14 @@
                             <td>@raceEvent.Venue</td>
 
                             <td>
-                                <div class="d-flex gap-2">
+                                <div class="d-flex gap-2 flex-wrap">
+
+                                    <a asp-controller="Organiser"
+                                       asp-action="Categories"
+                                       asp-route-eventId="@raceEvent.EventID"
+                                       class="btn btn-sm btn-info">
+                                        Categories
+                                    </a>
 
                                     <a asp-controller="Organiser"
                                        asp-action="EditEvent"

@@ -62,7 +62,7 @@ builder.Services.AddHttpClient<RaceDayApiClient>(client =>
 
     client.BaseAddress = new Uri(apiUrl);
 
-    client.Timeout = TimeSpan.FromSeconds(30);
+    client.Timeout = TimeSpan.FromSeconds(130);
 
 });
 
