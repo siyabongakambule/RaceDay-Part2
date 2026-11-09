@@ -1,0 +1,134 @@
+﻿@model RaceDay.Web.ViewModels.CreateEventViewModel
+
+@{
+    ViewData["Title"] = "Create New Event";
+}
+
+<div class="container mt-4 mb-5">
+
+    <div class="mb-4">
+        <h1 class="fw-bold">Create New Event</h1>
+        <p class="text-muted">
+            Enter the details below to create your race event.
+        </p>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+            <form asp-controller="Organiser"
+                  asp-action="CreateEvent"
+                  method="post">
+
+                <div asp-validation-summary="All"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EventName" class="form-label">
+                        Event Name
+                    </label>
+
+                    <input asp-for="EventName"
+                           class="form-control"
+                           placeholder="Enter event name" />
+
+                    <span asp-validation-for="EventName"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EventType" class="form-label">
+                        Event Type
+                    </label>
+
+                    <select asp-for="EventType" class="form-select">
+                        <option value="">Select event type</option>
+                        <option value="Run">Running</option>
+                        <option value="Cycle">Cycling</option>
+                    </select>
+
+                    <span asp-validation-for="EventType"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EventDate" class="form-label">
+                        Event Date
+                    </label>
+
+                    <input asp-for="EventDate"
+                           type="date"
+                           class="form-control" />
+
+                    <span asp-validation-for="EventDate"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Province" class="form-label">
+                        Province
+                    </label>
+
+                    <select asp-for="Province" class="form-select">
+                        <option value="">Select province</option>
+                        <option>Gauteng</option>
+                        <option>North West</option>
+                        <option>Limpopo</option>
+                        <option>Mpumalanga</option>
+                        <option>Free State</option>
+                        <option>KwaZulu-Natal</option>
+                        <option>Eastern Cape</option>
+                        <option>Western Cape</option>
+                        <option>Northern Cape</option>
+                    </select>
+
+                    <span asp-validation-for="Province"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Venue" class="form-label">
+                        Venue
+                    </label>
+
+                    <input asp-for="Venue"
+                           class="form-control"
+                           placeholder="Enter event venue" />
+
+                    <span asp-validation-for="Venue"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label">
+                        Description
+                    </label>
+
+                    <textarea asp-for="Description"
+                              class="form-control"
+                              rows="4"
+                              placeholder="Describe your event">
+                    </textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Create Event
+                </button>
+
+                <a asp-controller="Organiser"
+                   asp-action="Events"
+                   class="btn btn-outline-secondary ms-2">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

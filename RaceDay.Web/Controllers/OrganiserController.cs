@@ -41,5 +41,45 @@ namespace RaceDay.Web.Controllers
 
             return View(myEvents);
         }
+
+        // Display the create event form
+        [HttpGet]
+        public IActionResult CreateEvent()
+        {
+            return View(new CreateEventViewModel
+            {
+                EventDate = DateTime.Today.AddDays(1)
+            });
+        }
+
+        // Submit a new event to the API
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateEvent(CreateEventViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var response = await _api.PostAsync(
+                "api/events", model);
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Your event was created successfully!";
+                return RedirectToAction(nameof(Events));
+            }
+
+            var errorMessage = await response.Content.ReadAsStringAsync();
+
+            ModelState.AddModelError(
+                string.Empty,
+                string.IsNullOrWhiteSpace(errorMessage)
+                    ? "Unable to create the event. Please try again."
+                    : errorMessage);
+
+            return View(model);
+        }
     }
 }
