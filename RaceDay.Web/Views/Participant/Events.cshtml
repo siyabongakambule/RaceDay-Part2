@@ -13,7 +13,7 @@
         </p>
     </div>
 
-    @if (!Model.Any())
+    @if (Model == null || !Model.Any())
     {
         <div class="alert alert-info">
             No events are currently available.
@@ -58,6 +58,13 @@
                                 <strong>Venue:</strong>
                                 @item.Venue
                             </p>
+
+                            <a asp-controller="Participant"
+                               asp-action="Categories"
+                               asp-route-eventId="@item.EventID"
+                               class="btn btn-primary w-100">
+                                View Categories & Enrol
+                            </a>
 
                         </div>
 

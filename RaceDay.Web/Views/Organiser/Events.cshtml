@@ -77,6 +77,20 @@
                                     </a>
 
                                     <a asp-controller="Organiser"
+                                       asp-action="Enrolments"
+                                       asp-route-eventId="@raceEvent.EventID"
+                                       class="btn btn-sm btn-success">
+                                        Enrolments
+                                    </a>
+
+                                    <a asp-controller="Organiser"
+                                       asp-action="Results"
+                                       asp-route-eventId="@raceEvent.EventID"
+                                       class="btn btn-sm btn-primary">
+                                        Results
+                                    </a>
+
+                                    <a asp-controller="Organiser"
                                        asp-action="EditEvent"
                                        asp-route-id="@raceEvent.EventID"
                                        class="btn btn-sm btn-warning">
@@ -88,6 +102,8 @@
                                           asp-route-id="@raceEvent.EventID"
                                           method="post"
                                           onsubmit="return confirm('Are you sure you want to delete this event?');">
+
+                                        @Html.AntiForgeryToken()
 
                                         <button type="submit"
                                                 class="btn btn-sm btn-danger">

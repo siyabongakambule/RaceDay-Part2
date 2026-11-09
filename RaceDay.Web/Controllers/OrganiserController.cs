@@ -141,11 +141,11 @@ namespace RaceDay.Web.Controllers
 
             return RedirectToAction(nameof(Events));
         }
-    
 
-    //  CATEGORY MANAGEMENT 
 
-[HttpGet]
+        //  CATEGORY MANAGEMENT 
+
+        [HttpGet]
         public async Task<IActionResult> Categories(int eventId)
         {
             var raceEvent = await _api.GetAsync<EventViewModel>($"api/events/{eventId}");
@@ -302,5 +302,104 @@ namespace RaceDay.Web.Controllers
             return RedirectToAction(nameof(Categories), new { eventId });
         }
 
+
+
+
+        public async Task<IActionResult> Enrolments(int eventId)
+        {
+            var raceEvent = await _api.GetAsync<EventViewModel>(
+                $"api/events/{eventId}");
+
+            if (raceEvent == null)
+                return NotFound();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userId, out int organiserId) ||
+                raceEvent.OrganiserID != organiserId)
+                return Forbid();
+
+            var enrolments = await _api.GetAsync<List<EnrolmentViewModel>>(
+                $"api/events/{eventId}/enrolments");
+
+            ViewBag.EventID = eventId;
+            ViewBag.EventName = raceEvent.EventName;
+
+            return View(enrolments ?? new List<EnrolmentViewModel>());
+        }
+
+        // Update an enrolment status
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateEnrolmentStatus(
+            int id, int eventId, string status)
+        {
+            var response = await _api.PutAsync(
+                $"api/enrolments/{id}/status",
+                new { Status = status });
+
+            if (response.IsSuccessStatusCode)
+                TempData["SuccessMessage"] = "Enrolment status updated successfully!";
+            else
+                TempData["ErrorMessage"] = "Unable to update enrolment status.";
+
+            return RedirectToAction(nameof(Enrolments), new { eventId });
+        }
+    
+    public async Task<IActionResult> Results(int eventId)
+        {
+            var raceEvent = await _api.GetAsync<EventViewModel>(
+                $"api/events/{eventId}");
+
+            if (raceEvent == null)
+                return NotFound();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userId, out int organiserId) ||
+                raceEvent.OrganiserID != organiserId)
+                return Forbid();
+
+            var enrolments = await _api.GetAsync<List<EnrolmentViewModel>>(
+                $"api/events/{eventId}/enrolments");
+
+            var results = await _api.GetAsync<List<ResultViewModel>>(
+                $"api/events/{eventId}/results");
+
+            var model = new EventResultsViewModel
+            {
+                EventID = eventId,
+                EventName = raceEvent.EventName,
+                Enrolments = enrolments ?? new List<EnrolmentViewModel>(),
+                Results = results ?? new List<ResultViewModel>()
+            };
+
+            return View(model);
+        }
+
+        // Record a participant's race result
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecordResult(
+            int eventId,
+            int enrollmentId,
+            TimeSpan finishTime,
+            int? position)
+        {
+            var response = await _api.PostAsync(
+                $"api/enrolments/{enrollmentId}/results",
+                new
+                {
+                    FinishTime = finishTime,
+                    Position = position
+                });
+
+            if (response.IsSuccessStatusCode)
+                TempData["SuccessMessage"] = "Race result recorded successfully!";
+            else
+                TempData["ErrorMessage"] = "Unable to record the race result.";
+
+            return RedirectToAction(nameof(Results), new { eventId });
+        }
     }
 }

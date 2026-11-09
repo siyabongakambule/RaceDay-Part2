@@ -1,0 +1,92 @@
+﻿@model List<RaceDay.Web.ViewModels.CategoryViewModel>
+
+@{
+    ViewData["Title"] = "Event Categories";
+}
+
+<div class="container mt-4 mb-5">
+
+    <h1 class="fw-bold">Event Categories</h1>
+
+    <h5 class="text-muted mb-4">@ViewBag.EventName</h5>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            No categories have been added to this event yet.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th>Category</th>
+                        <th>Distance</th>
+                        <th>Entry Fee</th>
+                        <th>Maximum Participants</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var category in Model)
+                    {
+                        <tr>
+                            <td>@category.CategoryName</td>
+                            <td>@category.DistanceKm KM</td>
+                            <td>R @category.EntryFee</td>
+                            <td>@category.MaxParticipants</td>
+
+                            <td>
+                                <form asp-action="Enrol"
+                                      asp-controller="Participant"
+                                      method="post">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="categoryId"
+                                           value="@category.CategoryID" />
+
+                                    <input type="hidden"
+                                           name="eventId"
+                                           value="@category.EventID" />
+
+                                    <button type="submit"
+                                            class="btn btn-primary btn-sm">
+                                        Enrol Now
+                                    </button>
+
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    }
+
+    <a asp-action="Events"
+       class="btn btn-outline-secondary mt-3">
+        Back to Events
+    </a>
+
+</div>
