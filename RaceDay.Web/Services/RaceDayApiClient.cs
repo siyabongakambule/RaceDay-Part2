@@ -1,6 +1,5 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Security.Claims;
 
 namespace RaceDay.Web.Services;
 
@@ -17,11 +16,18 @@ public class RaceDayApiClient
         _httpContextAccessor = httpContextAccessor;
     }
 
-    // Attach the logged-in user's JWT to API requests
+    // ATTACH JWT USING SESSION
     private void AddAuthorizationHeader()
     {
-        var token = _httpContextAccessor.HttpContext?
-            .User.FindFirst("AccessToken")?.Value;
+        var context = _httpContextAccessor.HttpContext;
+
+        var token = context?.Session.GetString("AccessToken");
+
+        // Fallback to authentication claim
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            token = context?.User.FindFirst("AccessToken")?.Value;
+        }
 
         _httpClient.DefaultRequestHeaders.Authorization = null;
 
@@ -32,28 +38,26 @@ public class RaceDayApiClient
         }
     }
 
-    // Register a new user
+    // REGISTER
     public async Task<HttpResponseMessage> RegisterAsync<T>(T data)
     {
         return await _httpClient.PostAsJsonAsync(
             "api/auth/register", data);
     }
 
-    // Login
+    // LOGIN
     public async Task<T?> LoginAsync<T>(object data)
     {
         var response = await _httpClient.PostAsJsonAsync(
             "api/auth/login", data);
 
         if (!response.IsSuccessStatusCode)
-        {
             return default;
-        }
 
         return await response.Content.ReadFromJsonAsync<T>();
     }
 
-    // GET request
+    // GET
     public async Task<T?> GetAsync<T>(string endpoint)
     {
         AddAuthorizationHeader();
@@ -61,14 +65,12 @@ public class RaceDayApiClient
         var response = await _httpClient.GetAsync(endpoint);
 
         if (!response.IsSuccessStatusCode)
-        {
             return default;
-        }
 
         return await response.Content.ReadFromJsonAsync<T>();
     }
 
-    // POST request
+    // POST
     public async Task<HttpResponseMessage> PostAsync<T>(
         string endpoint, T data)
     {
@@ -77,7 +79,7 @@ public class RaceDayApiClient
         return await _httpClient.PostAsJsonAsync(endpoint, data);
     }
 
-    // PUT request
+    // PUT
     public async Task<HttpResponseMessage> PutAsync<T>(
         string endpoint, T data)
     {
@@ -86,7 +88,7 @@ public class RaceDayApiClient
         return await _httpClient.PutAsJsonAsync(endpoint, data);
     }
 
-    // DELETE request
+    // DELETE
     public async Task<HttpResponseMessage> DeleteAsync(string endpoint)
     {
         AddAuthorizationHeader();

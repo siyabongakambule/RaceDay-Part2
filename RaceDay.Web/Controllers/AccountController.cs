@@ -48,21 +48,34 @@ public class AccountController : Controller
             return View(model);
         }
 
+        // STORE USER DETAILS IN SESSION
+        HttpContext.Session.SetString("AccessToken", response.Token);
+        HttpContext.Session.SetString("UserRole", response.User.Role);
+        HttpContext.Session.SetString("UserName", response.User.FullName);
+        HttpContext.Session.SetString(
+            "UserID", response.User.UserID.ToString());
+
+        // CREATE AUTHENTICATION CLAIMS
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier,
+            new Claim(
+                ClaimTypes.NameIdentifier,
                 response.User.UserID.ToString()),
 
-            new Claim(ClaimTypes.Name,
+            new Claim(
+                ClaimTypes.Name,
                 response.User.FullName),
 
-            new Claim(ClaimTypes.Email,
+            new Claim(
+                ClaimTypes.Email,
                 response.User.Email),
 
-            new Claim(ClaimTypes.Role,
+            new Claim(
+                ClaimTypes.Role,
                 response.User.Role),
 
-            new Claim("AccessToken",
+            new Claim(
+                "AccessToken",
                 response.Token)
         };
 
@@ -76,6 +89,7 @@ public class AccountController : Controller
             CookieAuthenticationDefaults.AuthenticationScheme,
             principal);
 
+        // REDIRECT ACCORDING TO ROLE
         if (response.User.Role == "Organiser")
             return RedirectToAction("Dashboard", "Organiser");
 
@@ -134,6 +148,10 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
+        // CLEAR SESSION DATA
+        HttpContext.Session.Clear();
+
+        // SIGN OUT AUTHENTICATED USER
         await HttpContext.SignOutAsync(
             CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -148,7 +166,7 @@ public class AccountController : Controller
     }
 }
 
-// Models used to read the API login response
+// API LOGIN RESPONSE MODELS
 public class AuthResponse
 {
     public string Token { get; set; } = string.Empty;

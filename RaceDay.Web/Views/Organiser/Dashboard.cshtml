@@ -1,5 +1,7 @@
-﻿@{
-ViewData["Title"] = "Organiser Dashboard";
+﻿@model RaceDay.Web.ViewModels.OrganiserDashboardViewModel
+
+@{
+    ViewData["Title"] = "Organiser Dashboard";
 }
 
 <style>
@@ -10,9 +12,11 @@ ViewData["Title"] = "Organiser Dashboard";
         border-radius: 15px;
         margin-bottom: 30px;
     }
-    .dashboard-header h1 {
-        font-weight: 800;
-    }
+
+        .dashboard-header h1 {
+            font-weight: 800;
+        }
+
     .dashboard-card {
         background: white;
         border: 1px solid #e5e7eb;
@@ -21,103 +25,188 @@ ViewData["Title"] = "Organiser Dashboard";
         height: 100%;
         box-shadow: 0 3px 12px rgba(0,0,0,0.05);
     }
+
     .dashboard-icon {
         font-size: 35px;
         margin-bottom: 15px;
     }
+
     .dashboard-card h4 {
         font-weight: 700;
         color: #172b4d;
     }
+
     .dashboard-card p {
         color: #64748b;
-        min-height: 48px;
     }
+
     .section-heading {
         font-weight: 800;
         color: #172b4d;
         margin-bottom: 20px;
     }
+
+    .stat-number {
+        font-size: 32px;
+        font-weight: 800;
+        color: #174b70;
+    }
 </style>
 <div class="container mt-4 mb-5">
-<div class="dashboard-header">
-    <h1>Organiser Dashboard</h1>
-    <h5>Welcome, @User.Identity?.Name!</h5>
-    <p>Manage your races, participants, categories and results from one place.</p>
-</div>
-<h3 class="section-heading">Event Management</h3>
-<div class="row g-4">
-    <div class="col-md-6 col-lg-4">
-        <div class="dashboard-card">
-            <div class="dashboard-icon"></div>
-            <h4>Manage Events</h4>
-            <p>Create, view, edit and delete your events.</p>
-            <a asp-controller="Organiser"
-               asp-action="Events"
-               class="btn btn-primary">
-                Manage Events
-            </a>
+    <div class="dashboard-header">
+        <h1>Organiser Dashboard</h1>
+        <h5>Welcome, @User.Identity?.Name!</h5>
+        <p>Manage your races, participants, categories and results from one place.</p>
+    </div>
+    <!-- DASHBOARD STATISTICS -->
+    <h3 class="section-heading">Event Statistics</h3>
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon"></div>
+                <h4>Total Events</h4>
+                <div class="stat-number">@Model.TotalEvents</div>
+                <p>Events you have created.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon"></div>
+                <h4>Total Enrolments</h4>
+                <div class="stat-number">@Model.TotalEnrolments</div>
+                <p>Participants enrolled in your events.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon"></div>
+                <h4>Upcoming Events</h4>
+                <div class="stat-number">@Model.UpcomingEvents</div>
+                <p>Events scheduled for today or later.</p>
+            </div>
         </div>
     </div>
-    <div class="col-md-6 col-lg-4">
-        <div class="dashboard-card">
-            <div class="dashboard-icon"></div>
-            <h4>Manage Categories</h4>
-            <p>Create categories and set race distances and entry fees.</p>
-            <a asp-controller="Organiser"
-               asp-action="Events"
-               class="btn btn-primary">
-                Manage Categories
-            </a>
+    <!-- EVENT MANAGEMENT -->
+    <h3 class="section-heading">Event Management</h3>
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon"></div>
+                <h4>Manage Events</h4>
+                <p>Create, view, edit and delete your events.</p>
+                <a asp-controller="Organiser"
+                   asp-action="Events"
+                   class="btn btn-primary">
+                    Manage Events
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon"></div>
+                <h4>Manage Categories</h4>
+                <p>Create categories and set race distances and entry fees.</p>
+                <a asp-controller="Organiser"
+                   asp-action="Events"
+                   class="btn btn-primary">
+                    Manage Categories
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon"></div>
+                <h4>View Enrolments</h4>
+                <p>View participants and their enrolment statuses.</p>
+                <a asp-controller="Organiser"
+                   asp-action="Events"
+                   class="btn btn-primary">
+                    View Enrolments
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon"></div>
+                <h4>Race Results</h4>
+                <p>Capture finishing times and participant positions.</p>
+                <a asp-controller="Organiser"
+                   asp-action="Events"
+                   class="btn btn-primary">
+                    Manage Results
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon"></div>
+                <h4>Upcoming Events</h4>
+                <p>View your scheduled races and event dates.</p>
+                <a asp-controller="Organiser"
+                   asp-action="Events"
+                   class="btn btn-primary">
+                    View Events
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card">
+                <div class="dashboard-icon"></div>
+                <h4>Event Overview</h4>
+                <p>Review your event and participant information.</p>
+                <a asp-controller="Organiser"
+                   asp-action="Events"
+                   class="btn btn-primary">
+                    View Overview
+                </a>
+            </div>
         </div>
     </div>
-    <div class="col-md-6 col-lg-4">
-        <div class="dashboard-card">
-            <div class="dashboard-icon"></div>
-            <h4>View Enrolments</h4>
-            <p>View participants and their enrolment statuses.</p>
-            <a asp-controller="Organiser"
-               asp-action="Events"
-               class="btn btn-primary">
-                View Enrolments
-            </a>
+    <!-- EVENT OVERVIEW TABLE -->
+    <h3 class="section-heading mt-5">Your Events</h3>
+    @if (Model.Events == null || !Model.Events.Any())
+    {
+        <div class="alert alert-info">
+            You have not created any events yet.
         </div>
-    </div>
-    <div class="col-md-6 col-lg-4">
-        <div class="dashboard-card">
-            <div class="dashboard-icon"></div>
-            <h4>Race Results</h4>
-            <p>Capture finishing times and participant positions.</p>
-            <a asp-controller="Organiser"
-               asp-action="Events"
-               class="btn btn-primary">
-                Manage Results
-            </a>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Event Type</th>
+                        <th>Date</th>
+                        <th>Province</th>
+                        <th>Venue</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var raceEvent in Model.Events)
+                    {
+                        <tr>
+                            <td>@raceEvent.EventName</td>
+                            <td>@raceEvent.EventType</td>
+                            <td>@raceEvent.EventDate.ToString("dd MMM yyyy")</td>
+                            <td>@raceEvent.Province</td>
+                            <td>@raceEvent.Venue</td>
+                            <td>
+                                @if (raceEvent.EventDate.Date >= DateTime.Today)
+                                {
+                                    <span class="badge bg-success">Upcoming</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Completed</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    </div>
-    <div class="col-md-6 col-lg-4">
-        <div class="dashboard-card">
-            <div class="dashboard-icon"></div>
-            <h4>Upcoming Events</h4>
-            <p>Keep track of your scheduled races.</p>
-            <a asp-controller="Organiser"
-               asp-action="Events"
-               class="btn btn-primary">
-                View Events
-            </a>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-4">
-        <div class="dashboard-card">
-            <div class="dashboard-icon"></div>
-            <h4>Event Overview</h4>
-            <p>Review your event and participant information.</p>
-            <a asp-controller="Organiser"
-               asp-action="Events"
-               class="btn btn-primary">
-                View Overview
-            </a>
-        </div>
-    </div>
-</div>
+    }
 </div>

@@ -16,11 +16,43 @@ namespace RaceDay.Web.Controllers
             _api = api;
         }
 
-        public IActionResult Dashboard()
+        // ORGANISER DASHBOARD
+        public async Task<IActionResult> Dashboard()
         {
-            return View();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userId, out int organiserId))
+                return Forbid();
+
+            var events = await _api.GetAsync<List<EventViewModel>>("api/events");
+
+            var myEvents = (events ?? new List<EventViewModel>())
+                .Where(e => e.OrganiserID == organiserId)
+                .ToList();
+
+            int totalEnrolments = 0;
+
+            foreach (var raceEvent in myEvents)
+            {
+                var enrolments = await _api.GetAsync<List<EnrolmentViewModel>>(
+                    $"api/events/{raceEvent.EventID}/enrolments");
+
+                totalEnrolments += enrolments?.Count ?? 0;
+            }
+
+            var model = new OrganiserDashboardViewModel
+            {
+                TotalEvents = myEvents.Count,
+                TotalEnrolments = totalEnrolments,
+                UpcomingEvents = myEvents.Count(
+                    e => e.EventDate.Date >= DateTime.Today),
+                Events = myEvents.OrderBy(e => e.EventDate).ToList()
+            };
+
+            return View(model);
         }
 
+        // VIEW EVENTS
         public async Task<IActionResult> Events()
         {
             var events = await _api.GetAsync<List<EventViewModel>>("api/events");
@@ -37,6 +69,7 @@ namespace RaceDay.Web.Controllers
             return View(myEvents);
         }
 
+        // CREATE EVENT
         [HttpGet]
         public IActionResult CreateEvent()
         {
@@ -63,18 +96,21 @@ namespace RaceDay.Web.Controllers
 
             var errorMessage = await response.Content.ReadAsStringAsync();
 
-            ModelState.AddModelError(string.Empty,
+            ModelState.AddModelError(
+                string.Empty,
                 string.IsNullOrWhiteSpace(errorMessage)
-                ? "Unable to create the event. Please try again."
-                : errorMessage);
+                    ? "Unable to create the event. Please try again."
+                    : errorMessage);
 
             return View(model);
         }
 
+        // EDIT EVENT
         [HttpGet]
         public async Task<IActionResult> EditEvent(int id)
         {
-            var raceEvent = await _api.GetAsync<EventViewModel>($"api/events/{id}");
+            var raceEvent = await _api.GetAsync<EventViewModel>(
+                $"api/events/{id}");
 
             if (raceEvent == null)
                 return NotFound();
@@ -100,7 +136,8 @@ namespace RaceDay.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditEvent(int id, CreateEventViewModel model)
+        public async Task<IActionResult> EditEvent(
+            int id, CreateEventViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -115,14 +152,16 @@ namespace RaceDay.Web.Controllers
 
             var errorMessage = await response.Content.ReadAsStringAsync();
 
-            ModelState.AddModelError(string.Empty,
+            ModelState.AddModelError(
+                string.Empty,
                 string.IsNullOrWhiteSpace(errorMessage)
-                ? "Unable to update the event."
-                : errorMessage);
+                    ? "Unable to update the event."
+                    : errorMessage);
 
             return View(model);
         }
 
+        // DELETE EVENT
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteEvent(int id)
@@ -142,13 +181,14 @@ namespace RaceDay.Web.Controllers
             return RedirectToAction(nameof(Events));
         }
 
+        // CATEGORY MANAGEMENT
 
-        //  CATEGORY MANAGEMENT 
-
+        // VIEW CATEGORIES
         [HttpGet]
         public async Task<IActionResult> Categories(int eventId)
         {
-            var raceEvent = await _api.GetAsync<EventViewModel>($"api/events/{eventId}");
+            var raceEvent = await _api.GetAsync<EventViewModel>(
+                $"api/events/{eventId}");
 
             if (raceEvent == null)
                 return NotFound();
@@ -168,6 +208,7 @@ namespace RaceDay.Web.Controllers
             return View(categories ?? new List<CategoryViewModel>());
         }
 
+        // CREATE CATEGORY
         [HttpGet]
         public IActionResult CreateCategory(int eventId)
         {
@@ -197,17 +238,20 @@ namespace RaceDay.Web.Controllers
 
             var error = await response.Content.ReadAsStringAsync();
 
-            ModelState.AddModelError(string.Empty,
+            ModelState.AddModelError(
+                string.Empty,
                 string.IsNullOrWhiteSpace(error)
-                ? "Unable to create category."
-                : error);
+                    ? "Unable to create category."
+                    : error);
 
             ViewBag.EventID = eventId;
             return View(model);
         }
 
+        // EDIT CATEGORY
         [HttpGet]
-        public async Task<IActionResult> EditCategory(int eventId, int categoryId)
+        public async Task<IActionResult> EditCategory(
+            int eventId, int categoryId)
         {
             var categories = await _api.GetAsync<List<CategoryViewModel>>(
                 $"api/events/{eventId}/categories");
@@ -267,10 +311,11 @@ namespace RaceDay.Web.Controllers
 
             var error = await response.Content.ReadAsStringAsync();
 
-            ModelState.AddModelError(string.Empty,
+            ModelState.AddModelError(
+                string.Empty,
                 string.IsNullOrWhiteSpace(error)
-                ? "Unable to update category."
-                : error);
+                    ? "Unable to update category."
+                    : error);
 
             ViewBag.EventID = eventId;
             ViewBag.CategoryID = categoryId;
@@ -278,9 +323,11 @@ namespace RaceDay.Web.Controllers
             return View(model);
         }
 
+        // DELETE CATEGORY
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteCategory(int eventId, int categoryId)
+        public async Task<IActionResult> DeleteCategory(
+            int eventId, int categoryId)
         {
             var response = await _api.DeleteAsync(
                 $"api/categories/{categoryId}");
@@ -295,16 +342,14 @@ namespace RaceDay.Web.Controllers
 
                 TempData["ErrorMessage"] =
                     string.IsNullOrWhiteSpace(error)
-                    ? "Unable to delete category. It may have existing enrolments."
-                    : error;
+                        ? "Unable to delete category. It may have existing enrolments."
+                        : error;
             }
 
             return RedirectToAction(nameof(Categories), new { eventId });
         }
 
-
-
-
+        // VIEW ENROLMENTS
         public async Task<IActionResult> Enrolments(int eventId)
         {
             var raceEvent = await _api.GetAsync<EventViewModel>(
@@ -328,7 +373,7 @@ namespace RaceDay.Web.Controllers
             return View(enrolments ?? new List<EnrolmentViewModel>());
         }
 
-        // Update an enrolment status
+        // UPDATE ENROLMENT STATUS
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateEnrolmentStatus(
@@ -339,14 +384,17 @@ namespace RaceDay.Web.Controllers
                 new { Status = status });
 
             if (response.IsSuccessStatusCode)
-                TempData["SuccessMessage"] = "Enrolment status updated successfully!";
+                TempData["SuccessMessage"] =
+                    "Enrolment status updated successfully!";
             else
-                TempData["ErrorMessage"] = "Unable to update enrolment status.";
+                TempData["ErrorMessage"] =
+                    "Unable to update enrolment status.";
 
             return RedirectToAction(nameof(Enrolments), new { eventId });
         }
-    
-    public async Task<IActionResult> Results(int eventId)
+
+        // VIEW RESULTS
+        public async Task<IActionResult> Results(int eventId)
         {
             var raceEvent = await _api.GetAsync<EventViewModel>(
                 $"api/events/{eventId}");
@@ -377,7 +425,7 @@ namespace RaceDay.Web.Controllers
             return View(model);
         }
 
-        // Record a participant's race result
+        // RECORD PARTICIPANT RESULT
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RecordResult(
@@ -395,9 +443,11 @@ namespace RaceDay.Web.Controllers
                 });
 
             if (response.IsSuccessStatusCode)
-                TempData["SuccessMessage"] = "Race result recorded successfully!";
+                TempData["SuccessMessage"] =
+                    "Race result recorded successfully!";
             else
-                TempData["ErrorMessage"] = "Unable to record the race result.";
+                TempData["ErrorMessage"] =
+                    "Unable to record the race result.";
 
             return RedirectToAction(nameof(Results), new { eventId });
         }
