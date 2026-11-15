@@ -37,6 +37,9 @@ public class Event
     public string Venue { get; set; } = string.Empty;
 
     public string? Description { get; set; }
+    [MaxLength(500)]
+    public string? ImageUrl { get; set; }
+
 
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 

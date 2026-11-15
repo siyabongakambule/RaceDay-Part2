@@ -20,5 +20,6 @@ namespace RaceDay.Web.ViewModels
         public string Venue { get; set; } = string.Empty;
 
         public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

@@ -13,6 +13,7 @@ public class EventDto
     public string Province { get; set; } = string.Empty;
     public string Venue { get; set; } = string.Empty;
     public string? Description { get; set; }
+    public string? ImageUrl { get; set; }
     public DateTime CreatedDate { get; set; }
 }
 
@@ -35,6 +36,7 @@ public class CreateEventDto
     public string Venue { get; set; } = string.Empty;
 
     public string? Description { get; set; }
+    public string? ImageUrl { get; set; }
 }
 
 public class UpdateEventDto : CreateEventDto

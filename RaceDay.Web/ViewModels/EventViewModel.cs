@@ -11,6 +11,8 @@
         public string? Province { get; set; }
         public string? Venue { get; set; }
         public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
+
         public DateTime CreatedDate { get; set; }
     }
 }
