@@ -47,6 +47,7 @@
 
                 <thead class="table-dark">
                     <tr>
+                        <th>Image</th>
                         <th>Event Name</th>
                         <th>Type</th>
                         <th>Date</th>
@@ -60,6 +61,19 @@
                     @foreach (var raceEvent in Model)
                     {
                         <tr>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(raceEvent.ImageUrl))
+                                {
+                                    <img src="@Url.Action("Get", "EventImages", new { blobName = raceEvent.ImageUrl })"
+                                         alt="Event image"
+                                         style="width: 100px; height: 70px; object-fit: cover; border-radius: 6px;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No image</span>
+                                }
+                            </td>
+
                             <td>@raceEvent.EventName</td>
                             <td>@raceEvent.EventType</td>
                             <td>@raceEvent.EventDate.ToString("dd MMM yyyy")</td>
