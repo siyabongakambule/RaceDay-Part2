@@ -10,10 +10,14 @@ namespace RaceDay.Web.Controllers
     public class OrganiserController : Controller
     {
         private readonly RaceDayApiClient _api;
+        private readonly AzureBlobStorageService _blobStorage;
 
-        public OrganiserController(RaceDayApiClient api)
+        public OrganiserController(
+            RaceDayApiClient api,
+            AzureBlobStorageService blobStorage)
         {
             _api = api;
+            _blobStorage = blobStorage;
         }
 
         // ORGANISER DASHBOARD
@@ -81,16 +85,25 @@ namespace RaceDay.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateEvent(CreateEventViewModel model)
+        public async Task<IActionResult> CreateEvent(
+            CreateEventViewModel model,
+            IFormFile? imageFile)
         {
             if (!ModelState.IsValid)
                 return View(model);
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                model.ImageUrl = await _blobStorage.UploadAsync(imageFile);
+            }
 
             var response = await _api.PostAsync("api/events", model);
 
             if (response.IsSuccessStatusCode)
             {
-                TempData["SuccessMessage"] = "Your event was created successfully!";
+                TempData["SuccessMessage"] =
+                    "Your event was created successfully!";
+
                 return RedirectToAction(nameof(Events));
             }
 
@@ -128,7 +141,8 @@ namespace RaceDay.Web.Controllers
                 EventDate = raceEvent.EventDate,
                 Province = raceEvent.Province,
                 Venue = raceEvent.Venue,
-                Description = raceEvent.Description
+                Description = raceEvent.Description,
+                ImageUrl = raceEvent.ImageUrl
             };
 
             return View(model);
@@ -137,16 +151,41 @@ namespace RaceDay.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditEvent(
-            int id, CreateEventViewModel model)
+            int id,
+            CreateEventViewModel model,
+            IFormFile? imageFile)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var response = await _api.PutAsync($"api/events/{id}", model);
+            var existingEvent = await _api.GetAsync<EventViewModel>(
+                $"api/events/{id}");
+
+            if (existingEvent == null)
+                return NotFound();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userId, out int organiserId) ||
+                existingEvent.OrganiserID != organiserId)
+                return Forbid();
+
+            // Keep the existing image unless a new one is uploaded.
+            model.ImageUrl = existingEvent.ImageUrl;
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                model.ImageUrl = await _blobStorage.UploadAsync(imageFile);
+            }
+
+            var response = await _api.PutAsync(
+                $"api/events/{id}", model);
 
             if (response.IsSuccessStatusCode)
             {
-                TempData["SuccessMessage"] = "Your event was updated successfully!";
+                TempData["SuccessMessage"] =
+                    "Your event was updated successfully!";
+
                 return RedirectToAction(nameof(Events));
             }
 

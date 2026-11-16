@@ -8,6 +8,7 @@ builder.Services.AddControllersWithViews();
 
 // Access current user information
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<AzureBlobStorageService>();
 
 // SESSION MANAGEMENT
 builder.Services.AddDistributedMemoryCache();
