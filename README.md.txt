@@ -104,3 +104,4 @@ Development work for Part 3 is maintained on the Part3 branch of the RaceDay-2 r
 9. Conclusion
 
 RaceDay provides a centralised platform for managing race events and participant activities. The MVC frontend communicates with the Web API, while authentication and role-based authorisation help protect the application’s features.
+Azure blob stotage is added and works

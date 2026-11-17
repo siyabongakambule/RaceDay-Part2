@@ -9,7 +9,7 @@ using RaceDay.Models;
 namespace RaceDay.Controllers;
 
 [ApiController]
-[Route("api / events")]
+[Route("api/events")]
 public class EventsController : ControllerBase
 {
     private readonly ApplicationDbContext _db;
